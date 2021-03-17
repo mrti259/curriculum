@@ -2,7 +2,7 @@ const http = require("http")
 const fs = require("fs")
 const { writeHead, view } = require("./utils")
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8080
 const server = http.createServer()
 
 server.listen(PORT, err => {
@@ -12,14 +12,17 @@ server.listen(PORT, err => {
 
 server.on("request", (req, res) => {
     fs.readFile(view(req.url), (err, data) => {
-        if (err) {
-            writeHead(res, 404)
-            res.write("Not found")
+        if (err) { 
+            fs.readFile(view("404"), (err, data) => {
+                writeHead(res, 404)
+                res.write(data)
+                res.end()
+            })
         }
         else {
             writeHead(res, 200)
             res.write(data)
+            res.end()
         }
-        res.end()
     })
 })
